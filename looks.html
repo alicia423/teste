@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looks - Prisma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav.desktop-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        nav.desktop-nav a:hover {
+            opacity: 0.6;
+        }
+
+        .cart {
+            font-size: 12px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .cart:hover {
+            opacity: 0.6;
+        }
+
+        /* Menu Hambúrguer */
+        .hamburger {
+            cursor: pointer;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Menu Mobile */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: #fff;
+            font-size: 28px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .page-hero {
+            margin-top: 70px;
+            height: 60vh;
+            min-height: 400px;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('original.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Filter Section */
+        .filter-section {
+            padding: 60px 5%;
+            text-align: center;
+            background-color: #0a0a0a;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 12px 30px;
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background-color: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        /* Looks Grid */
+        .looks-section {
+            padding: 80px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .looks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .look-card {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #1a1a1a;
+        }
+
+        .look-image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 140%;
+            overflow: hidden;
+        }
+
+        .look-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(5%);
+            transition: transform 0.6s ease;
+        }
+
+        .look-card:hover .look-image {
+            transform: scale(1.1);
+        }
+
+        .look-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+            padding: 40px 25px 25px;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+        }
+
+        .look-card:hover .look-overlay {
+            transform: translateY(0);
+        }
+
+        .look-category {
+            display: inline-block;
+            background-color: #fff;
+            color: #000;
+            padding: 4px 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .look-title {
+            font-size: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .look-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .look-cta {
+            display: inline-block;
+            padding: 10px 25px;
+            background-color: transparent;
+            color: #fff;
+            text-decoration: none;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            border: 1px solid #fff;
+            transition: all 0.3s;
+        }
+
+        .look-cta:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Featured Look */
+        .featured-look {
+            margin-bottom: 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .featured-image {
+            width: 100%;
+            height: 700px;
+            object-fit: cover;
+            filter: grayscale(5%);
+        }
+
+        .featured-content {
+            padding: 0 40px;
+        }
+
+        .featured-tag {
+            display: inline-block;
+            background-color: #fff;
+            color: #000;
+            padding: 6px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .featured-content h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+
+        .featured-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 35px;
+        }
+
+        .featured-cta {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: #fff;
+            color: #000;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: 2px solid #fff;
+            transition: all 0.3s;
+        }
+
+        .featured-cta:hover {
+            background-color: transparent;
+            color: #fff;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 60px 5%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            color: #fff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section a {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #fff;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            nav.desktop-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .looks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+
+            .featured-look {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .featured-content {
+                padding: 0;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .looks-section {
+                padding: 60px 20px;
+            }
+
+            .looks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 25px;
+            }
+
+            .featured-image {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .looks-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="logo">PRISMA</div>
+        <nav class="desktop-nav">
+            <a href="index2.html">Loja</a>
+            <a href="collections.html">Coleções</a>
+            <a href="looks.html">Looks</a>
+        </nav>
+        <div class="cart">Carrinho (0)</div>
+    </header>
+
+    <!-- Menu Mobile -->
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="index2.html">Loja</a>
+        <a href="collections.html">Coleções</a>
+        <a href="looks.html">Looks</a>
+        <a href="index2.html#about">Sobre</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <h1>Looks</h1>
+    </section>
+
+    <!-- Filter -->
+    <section class="filter-section">
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="casual">Casual</button>
+            <button class="filter-btn" data-filter="elegante">Elegante</button>
+            <button class="filter-btn" data-filter="escritorio">Escritório</button>
+            <button class="filter-btn" data-filter="festa">Festa</button>
+        </div>
+    </section>
+
+    <!-- Looks -->
+    <section class="looks-section">
+        <!-- Featured Look -->
+        <div class="featured-look">
+            <img src="banner3.jpg" alt="Look Destaque" class="featured-image">
+            <div class="featured-content">
+                <span class="featured-tag">Look da Semana</span>
+                <h2>Power Dressing</h2>
+                <p>A combinação perfeita de sofisticação e confiança. Blazer estruturado com calça alfaiataria e acessórios minimalistas para um visual executivo impecável.</p>
+                <a href="#" class="featured-cta">Comprar Look Completo</a>
+            </div>
+        </div>
+
+        <!-- Looks Grid -->
+        <div class="looks-grid">
+            <div class="look-card" data-category="elegante">
+                <div class="look-image-wrapper">
+                    <img src="banner1.jpg" alt="Look Elegante" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Elegante</span>
+                    <h3 class="look-title">Noir Sophistiqué</h3>
+                    <p class="look-description">Vestido midi preto com detalhes em couro e scarpin.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+
+            <div class="look-card" data-category="casual">
+                <div class="look-image-wrapper">
+                    <img src="banner2.jpg" alt="Look Casual" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Casual</span>
+                    <h3 class="look-title">Urban Comfort</h3>
+                    <p class="look-description">Jeans wide leg com blusa oversized e tênis branco.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+
+            <div class="look-card" data-category="escritorio">
+                <div class="look-image-wrapper">
+                    <img src="bannerca2.jpg" alt="Look Escritório" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Escritório</span>
+                    <h3 class="look-title">Executive Chic</h3>
+                    <p class="look-description">Conjunto alfaiataria cinza com camisa de seda.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+
+            <div class="look-card" data-category="festa">
+                <div class="look-image-wrapper">
+                    <img src="bannerca1.jpg" alt="Look Festa" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Festa</span>
+                    <h3 class="look-title">Evening Glamour</h3>
+                    <p class="look-description">Vestido longo com brilho e clutch metalizada.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+
+            <div class="look-card" data-category="casual">
+                <div class="look-image-wrapper">
+                    <img src="banner4.jpg" alt="Look Casual" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Casual</span>
+                    <h3 class="look-title">Weekend Vibes</h3>
+                    <p class="look-description">Saia midi com moletom cropped e botas.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+
+            <div class="look-card" data-category="elegante">
+                <div class="look-image-wrapper">
+                    <img src="banner1.1.jpg" alt="Look Elegante" class="look-image">
+                </div>
+                <div class="look-overlay">
+                    <span class="look-category">Elegante</span>
+                    <h3 class="look-title">Minimal Elegance</h3>
+                    <p class="look-description">Vestido slip dress com blazer e sandália de salto.</p>
+                    <a href="#" class="look-cta">Ver Detalhes</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Loja</h4>
+                <a href="#acessorios">Acessórios</a>
+                <a href="#bolsas">Bolsas</a>
+                <a href="#roupas">Roupas</a>
+                <a href="#sapatos">Sapatos</a>
+            </div>
+            <div class="footer-section">
+                <h4>Suporte</h4>
+                <a href="#contato">Contato</a>
+                <a href="#faq">FAQ</a>
+                <a href="#trocas">Trocas e Devoluções</a>
+                <a href="#envio">Informações de Envio</a>
+            </div>
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <a href="#sobre">Sobre Nós</a>
+                <a href="#sustentabilidade">Sustentabilidade</a>
+                <a href="#carreiras">Carreiras</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="#privacidade">Privacidade</a>
+                <a href="#termos">Termos de Uso</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu Hambúrguer
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        const menuLinks = mobileMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Filter Functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const lookCards = document.querySelectorAll('.look-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                lookCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

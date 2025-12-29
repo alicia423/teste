@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coleções - Prisma</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav.desktop-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        nav.desktop-nav a:hover {
+            opacity: 0.6;
+        }
+
+        .cart {
+            font-size: 12px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .cart:hover {
+            opacity: 0.6;
+        }
+
+        /* Menu Hambúrguer */
+        .hamburger {
+            cursor: pointer;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Menu Mobile */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: #fff;
+            font-size: 28px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            opacity: 0.6;
+        }
+
+        /* Hero Section */
+        .page-hero {
+            margin-top: 70px;
+            height: 60vh;
+            min-height: 400px;
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('banner1.1.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            font-size: clamp(48px, 8vw, 80px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Collections Grid */
+        .collections-section {
+            padding: 100px 5%;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .collection-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 120px;
+            align-items: center;
+        }
+
+        .collection-item:nth-child(even) {
+            direction: rtl;
+        }
+
+        .collection-item:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .collection-image {
+            position: relative;
+            width: 100%;
+            padding-bottom: 120%;
+            background-color: #1a1a1a;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .collection-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(5%);
+            transition: transform 0.6s ease;
+        }
+
+        .collection-item:hover .collection-image img {
+            transform: scale(1.05);
+        }
+
+        .collection-content {
+            padding: 0 20px;
+        }
+
+        .collection-tag {
+            display: inline-block;
+            background-color: #fff;
+            color: #000;
+            padding: 6px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .collection-content h2 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+            line-height: 1.1;
+        }
+
+        .collection-content p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 35px;
+        }
+
+        .collection-cta {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: transparent;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: 2px solid #fff;
+            transition: all 0.3s;
+        }
+
+        .collection-cta:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 60px 5%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            color: #fff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section a {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #fff;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            nav.desktop-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .collection-item {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                margin-bottom: 80px;
+            }
+
+            .collection-item:nth-child(even) {
+                direction: ltr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .collections-section {
+                padding: 60px 20px;
+            }
+
+            .collection-content {
+                padding: 0;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="logo">PRISMA</div>
+        <nav class="desktop-nav">
+            <a href="index2.html">Loja</a>
+            <a href="collections.html">Coleções</a>
+            <a href="looks.html">Looks</a>
+        </nav>
+        <div class="cart">Carrinho (0)</div>
+    </header>
+
+    <!-- Menu Mobile -->
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="index2.html">Loja</a>
+        <a href="collections.html">Coleções</a>
+        <a href="looks.html">Looks</a>
+        <a href="index2.html#about">Sobre</a>
+    </nav>
+
+    <!-- Hero -->
+    <section class="page-hero">
+        <h1>Coleções</h1>
+    </section>
+
+    <!-- Collections -->
+    <section class="collections-section">
+        <div class="collection-item">
+            <div class="collection-image">
+                <img src="banner1.jpg" alt="Coleção Inverno 2025">
+            </div>
+            <div class="collection-content">
+                <span class="collection-tag">Nova Coleção</span>
+                <h2>Inverno 2025</h2>
+                <p>Peças sofisticadas que combinam elegância atemporal com conforto térmico. Tecidos nobres e cortes impecáveis para enfrentar o frio com estilo.</p>
+                <a href="#" class="collection-cta">Explorar Coleção</a>
+            </div>
+        </div>
+
+        <div class="collection-item">
+            <div class="collection-image">
+                <img src="banner2.jpg" alt="Coleção Urban">
+            </div>
+            <div class="collection-content">
+                <span class="collection-tag">Tendência</span>
+                <h2>Urban Chic</h2>
+                <p>A essência da moda urbana em peças versáteis e contemporâneas. Estilo casual elevado para a mulher moderna que vive em movimento.</p>
+                <a href="#" class="collection-cta">Explorar Coleção</a>
+            </div>
+        </div>
+
+        <div class="collection-item">
+            <div class="collection-image">
+                <img src="bannerca2.jpg" alt="Coleção Evening">
+            </div>
+            <div class="collection-content">
+                <span class="collection-tag">Premium</span>
+                <h2>Evening Elegance</h2>
+                <p>Sofisticação em cada detalhe para ocasiões especiais. Vestidos e conjuntos que celebram a feminilidade com design exclusivo.</p>
+                <a href="#" class="collection-cta">Explorar Coleção</a>
+            </div>
+        </div>
+
+        <div class="collection-item">
+            <div class="collection-image">
+                <img src="bannerca1.jpg" alt="Coleção Essentials">
+            </div>
+            <div class="collection-content">
+                <span class="collection-tag">Bestseller</span>
+                <h2>Essentials</h2>
+                <p>Básicos reinventados com qualidade superior. Peças fundamentais que formam a base de um guarda-roupa atemporal e versátil.</p>
+                <a href="#" class="collection-cta">Explorar Coleção</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Loja</h4>
+                <a href="#acessorios">Acessórios</a>
+                <a href="#bolsas">Bolsas</a>
+                <a href="#roupas">Roupas</a>
+                <a href="#sapatos">Sapatos</a>
+            </div>
+            <div class="footer-section">
+                <h4>Suporte</h4>
+                <a href="#contato">Contato</a>
+                <a href="#faq">FAQ</a>
+                <a href="#trocas">Trocas e Devoluções</a>
+                <a href="#envio">Informações de Envio</a>
+            </div>
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <a href="#sobre">Sobre Nós</a>
+                <a href="#sustentabilidade">Sustentabilidade</a>
+                <a href="#carreiras">Carreiras</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="#privacidade">Privacidade</a>
+                <a href="#termos">Termos de Uso</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu Hambúrguer
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        const menuLinks = mobileMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

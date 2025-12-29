@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisma - Moda Feminina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        nav.desktop-nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav.desktop-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        nav.desktop-nav a:hover {
+            opacity: 0.6;
+        }
+
+        .cart {
+            font-size: 12px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .cart:hover {
+            opacity: 0.6;
+        }
+
+        /* Menu Hambúrguer */
+        .hamburger {
+            cursor: pointer;
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(7px, 7px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            min-height: 700px;
+            background-color: #1a1a1a;
+            overflow: hidden;
+            margin-top: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(40px, 8vw, 80px);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(14px, 2vw, 18px);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            opacity: 0.8;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 18px 50px;
+            background-color: #fff;
+            color: #000;
+            text-decoration: none;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.3s;
+            animation: fadeInUp 1s ease 0.4s both;
+            border: 2px solid #fff;
+        }
+
+        .hero-cta:hover {
+            background-color: transparent;
+            color: #fff;
+        }
+
+        .hero-carousel {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .hero-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .hero-slide.active {
+            opacity: 0.4;
+        }
+
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Promo Banner */
+        .promo-banner {
+            background: linear-gradient(90deg, #ff0000 0%, #cc0000 100%);
+            padding: 15px 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .promo-text {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            animation: slidePromo 20s linear infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes slidePromo {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Products Section */
+        .products-banner {
+            background-color: #0a0a0a;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .products-banner h2 {
+            color: #fff;
+            font-size: clamp(32px, 5vw, 48px);
+            font-weight: 700;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 80px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            padding: 0 20px;
+        }
+
+        .product-card {
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.1);
+        }
+
+        .product-name {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .product-sale {
+            display: inline-block;
+            background-color: #ff0000;
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Content Section */
+        .content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 80px;
+            padding: 100px 5%;
+            background-color: #000;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .static-carousel {
+            position: relative;
+            width: 550px;
+            height: 650px;
+            flex-shrink: 0;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .carousel-images {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .carousel-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            object-fit: cover;
+            filter: grayscale(10%);
+        }
+
+        .carousel-image.active {
+            opacity: 1;
+        }
+
+        .content-text h3 {
+            color: #fff;
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .content-text p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+            line-height: 1.8;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .content-cta {
+            display: inline-block;
+            padding: 15px 40px;
+            background-color: transparent;
+            color: #fff;
+            text-decoration: none;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: 2px solid #fff;
+            transition: all 0.3s;
+        }
+
+        .content-cta:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Menu Mobile */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            color: #fff;
+            font-size: 28px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-menu a:hover {
+            opacity: 0.6;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 60px 5%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            color: #fff;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section a {
+            display: block;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 13px;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #fff;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            nav.desktop-nav {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .content {
+                flex-direction: column;
+                gap: 50px;
+            }
+
+            .static-carousel {
+                width: 100%;
+                max-width: 500px;
+                height: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .hero {
+                margin-top: 60px;
+                min-height: 600px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .carousel-container {
+                padding: 0 20px;
+            }
+
+            .content {
+                padding: 60px 20px;
+            }
+
+            .content-text {
+                text-align: center;
+            }
+
+            .content-text p {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .static-carousel {
+                height: 500px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="logo">PRISMA</div>
+        <nav class="desktop-nav">
+            <a href="#shop">Loja</a>
+            <a href="collections.html">Coleções</a>
+            <a href="looks.html">Looks</a>
+        </nav>
+        <div class="cart">Carrinho (0)</div>
+    </header>
+
+    <!-- Menu Mobile -->
+    <nav class="mobile-menu" id="mobileMenu">
+        <a href="#shop">Loja</a>
+        <a href="#collections">Coleções</a>
+        <a href="#looks">Looks</a>
+        <a href="#about">Sobre</a>
+    </nav>
+
+    <!-- Promo Banner -->
+    <div class="promo-banner">
+        <div class="promo-text">MODA UPCYCLING •</div>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-carousel">
+            <div class="hero-slide active">
+                <img src="BANNER.png" alt="Banner 1">
+            </div>
+            <div class="hero-slide">
+                <img src="teste7.png" alt="Banner 2">
+            </div>
+            <div class="hero-slide">
+                <img src="sapato.png" alt="Banner 3">
+            </div>
+            <div class="hero-slide">
+                <img src="teste3.png" alt="Banner 4">
+            </div>
+        </div>
+        
+        <div class="hero-content">
+            <h1 class="hero-title">Black Friday Sale</h1>
+            <p class="hero-subtitle">Até 50% de desconto • Frete grátis</p>
+            <a href="#shop" class="hero-cta">Comprar Agora</a>
+        </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products-banner">
+        <h2>Em Promoção</h2>
+        <div class="carousel-container">
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="banner.jpg" alt="Acessórios" class="product-image">
+                    </div>
+                    <p class="product-name">Acessórios</p>
+                    <span class="product-sale">30% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/bolsa.png" alt="Bolsa" class="product-image">
+                    </div>
+                    <p class="product-name">Bolsas</p>
+                    <span class="product-sale">25% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/camisetas.png" alt="Camisetas" class="product-image">
+                    </div>
+                    <p class="product-name">Camisetas</p>
+                    <span class="product-sale">35% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/saias.png" alt="Saias" class="product-image">
+                    </div>
+                    <p class="product-name">Saias</p>
+                    <span class="product-sale">20% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/vestidos.png" alt="Vestidos" class="product-image">
+                    </div>
+                    <p class="product-name">Vestidos</p>
+                    <span class="product-sale">35% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/sapatos.png" alt="Sapatos" class="product-image">
+                    </div>
+                    <p class="product-name">Sapatos</p>
+                    <span class="product-sale">30% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/jaquetas.png" alt="Jaquetas" class="product-image">
+                    </div>
+                    <p class="product-name">Jaquetas</p>
+                    <span class="product-sale">35% OFF</span>
+                </div>
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="images/calcas.png" alt="Calças" class="product-image">
+                    </div>
+                    <p class="product-name">Calças</p>
+                    <span class="product-sale">33% OFF</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <section class="content">
+        <div class="static-carousel">
+            <div class="carousel-images">
+                <img src="banner1.jpg" alt="Produto 1" class="carousel-image active">
+                <img src="banner2.jpg" alt="Produto 2" class="carousel-image">
+                <img src="bannerca2.jpg" alt="Produto 3" class="carousel-image">
+                <img src="bannerca1.jpg" alt="Produto 4" class="carousel-image">
+            </div>
+        </div>
+        <div class="content-text">
+            <h3>Sobre Nós</h3>
+            <p>Prisma é uma marca de moda feminina que combina estilo contemporâneo com qualidade excepcional. Nossa missão é empoderar mulheres através de peças únicas que expressam personalidade e confiança.</p>
+            <p>Cada coleção é cuidadosamente desenvolvida pensando na mulher moderna que valoriza design, conforto e sustentabilidade.</p>
+            <a href="#about" class="content-cta">Saiba Mais</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Loja</h4>
+                <a href="#acessorios">Acessórios</a>
+                <a href="#bolsas">Bolsas</a>
+                <a href="#roupas">Roupas</a>
+                <a href="#sapatos">Sapatos</a>
+            </div>
+            <div class="footer-section">
+                <h4>Suporte</h4>
+                <a href="#contato">Contato</a>
+                <a href="#faq">FAQ</a>
+                <a href="#trocas">Trocas e Devoluções</a>
+                <a href="#envio">Informações de Envio</a>
+            </div>
+            <div class="footer-section">
+                <h4>Empresa</h4>
+                <a href="#sobre">Sobre Nós</a>
+                <a href="#sustentabilidade">Sustentabilidade</a>
+                <a href="#carreiras">Carreiras</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="#privacidade">Privacidade</a>
+                <a href="#termos">Termos de Uso</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Menu Hambúrguer
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        const menuLinks = mobileMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !hamburger.contains(e.target)) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Carrossel Hero Banner
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        let currentHeroSlide = 0;
+
+        function updateHeroCarousel() {
+            heroSlides.forEach((slide, idx) => {
+                slide.classList.toggle('active', idx === currentHeroSlide);
+            });
+        }
+
+        // Auto-play hero
+        setInterval(() => {
+            currentHeroSlide = (currentHeroSlide + 1) % heroSlides.length;
+            updateHeroCarousel();
+        }, 5000);
+
+        // Carrossel Estático (Content)
+        const carouselImages = document.querySelectorAll('.carousel-image');
+        let currentImage = 0;
+
+        function updateStaticCarousel() {
+            carouselImages.forEach((img, idx) => {
+                img.classList.toggle('active', idx === currentImage);
+            });
+        }
+
+        // Auto-play carrossel estático
+        setInterval(() => {
+            currentImage = (currentImage + 1) % carouselImages.length;
+            updateStaticCarousel();
+        }, 4000);
+    </script>
+</body>
+</html>
